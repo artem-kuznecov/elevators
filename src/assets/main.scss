@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  overflow-y: hidden;
+}
+
+#app {
+  position: relative;
+  height: 100vh;
+  width: fit-content;
+  min-width: 100%;
+}
