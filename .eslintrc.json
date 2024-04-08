@@ -1,0 +1,28 @@
+{
+  "root": true,
+  "extends": [
+    "plugin:vue/vue3-essential",
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+    "no-trailing-spaces": "error",
+    "semi": ["error", "never"],
+    "space-before-function-paren": ["error", "always"],
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "comma-dangle": ["error", "never"],
+    "vue/comment-directive": 0,
+    "vue/html-indent": ["error", 2, {
+      "attribute": 1,
+      "baseIndent": 1,
+      "closeBracket": 0,
+      "alignAttributesVertically": true
+    }],
+    "vue/script-indent": ["error", 2, {
+      "baseIndent": 1
+    }],
+    "vue/multi-word-component-names": 0
+  }
+}
