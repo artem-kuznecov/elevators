@@ -2,9 +2,10 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 import { changeAttr, changeStyleAll } from '@/utils/changeStyles'
+import { storeData, getDataFromLS } from '@/utils/saveState'
 
 // * типы данных
-interface IShaft {
+export interface IShaft {
   id: number,
   currentFloor: number,
   busy: boolean,
@@ -13,7 +14,7 @@ interface IShaft {
   interimFloor: number
 }
 
-type TCall = {
+export type TCall = {
   targetFloor: number
 }
 
@@ -24,6 +25,9 @@ const DEFAULT_FLOORS: number = Number(import.meta.env.SETTINGS_FLOORS) > FLOORS_
 const DEFAULT_SHAFTS: number = Number(import.meta.env.SETTINGS_SHAFTS) > SHAFTS_LIMIT ? SHAFTS_LIMIT : Number(import.meta.env.SETTINGS_SHAFTS)
 
 export const settingsStore = defineStore('settings', () => {
+  // * восстановление данных после перезагрузки
+  const storedData = getDataFromLS()
+
   // * очередь вызовов
   const queue = ref<TCall[]>([])
 
@@ -49,12 +53,23 @@ export const settingsStore = defineStore('settings', () => {
   }
   const shafts = ref(initialShafts)
 
+  if (storedData) {
+    queue.value = storedData.queue
+    floors.value = storedData.floors
+    shafts.value = storedData.shafts
+  }
+
   // * установка наблюдателя: если лифтов в движении меньше, чем всего лифтов - выполняется обработка очереди вызовов
   watch(queue, () => {
+    storeData(floors.value, shafts.value, queue.value)
     if (processingCabins.value < shafts.value.length) processQueue()
     },
     { deep: true }
   )
+
+  watch([floors, shafts], () => {
+    storeData(floors.value, shafts.value, queue.value)
+  }, { deep: true })
 
   /*
     * функции увеличения и уменьшения количества этажей
@@ -138,11 +153,11 @@ export const settingsStore = defineStore('settings', () => {
     changeStyleAll(cabinSelector, 'transitionDuration', Math.abs(shafts.value[selectedCabin].currentFloor - targetFloor) + 's')
 
     // * установка интервала смены номера этажа на табло кабины
-    const inter = setInterval(() => {
+    const intervalID = window.setInterval(() => {
       if (shafts.value[selectedCabin].isMovingUp === true) shafts.value[selectedCabin].interimFloor++
       else shafts.value[selectedCabin].interimFloor--
       if (shafts.value[selectedCabin].interimFloor === targetFloor) {
-        clearInterval(inter)
+        clearInterval(intervalID)
         shafts.value[selectedCabin].isMovingUp = null
       }
     }, 1000)
@@ -185,6 +200,7 @@ export const settingsStore = defineStore('settings', () => {
   return {
     floors,
     shafts,
+    queue,
     addFloors,
     reduceFloors,
     addShafts,
