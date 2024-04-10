@@ -1,13 +1,13 @@
 {
   "name": "elevators2",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
+  "author": "Artem Kuznetsov (artemkuz.wmg@gmail.com)",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "preview": "vite preview",
+    "start": "vite",
+    "start:preview": "vite preview",
     "build": "vite build",
-    "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.ts --ignore-path .gitignore"
   },
   "dependencies": {
