@@ -5,7 +5,6 @@
   import { settingsStore } from '@/stores/settings'
 
   const settings = settingsStore()
-
   const { floors } = storeToRefs(settings)
   const { appendCall } = settings
 
