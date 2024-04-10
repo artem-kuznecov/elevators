@@ -1,16 +1,16 @@
 <script setup lang="ts">
-  const FLOORS_LIMIT: number = Number(import.meta.env.SETTINGS_FLOORS_LIMIT)
-  const SHAFTS_LIMIT: number = Number(import.meta.env.SETTINGS_SHAFTS_LIMIT)
+  import { storeToRefs } from 'pinia'
 
   import FloorsGrid from '@/components/FloorsGrid.vue'
   import ShaftsGrid from '@/components/shafts/ShaftsGrid.vue'
   import { settingsStore } from '@/stores/settings'
-  import { storeToRefs } from 'pinia'
+
+  const FLOORS_LIMIT: number = Number(import.meta.env.SETTINGS_FLOORS_LIMIT)
+  const SHAFTS_LIMIT: number = Number(import.meta.env.SETTINGS_SHAFTS_LIMIT)
 
   const settings = settingsStore()
   const { shafts, floors } = storeToRefs(settings)
   const { addFloors, reduceFloors, addShafts, reduceShafts } = settings
-
 </script>
 
 <template>
