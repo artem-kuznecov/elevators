@@ -22,11 +22,10 @@
 
 <style scoped lang="scss">
   .shafts-grid {
-    position: absolute;
-    z-index: 2;
+    @extend .p-absolute;
     top: 0;
     left: 3rem;
     height: 100%;
-    background-color: yellow;
+    z-index: 2;
   }
 </style>

@@ -28,7 +28,7 @@
       class="floor"
       :style="floorHeight"
     >
-      <span class="p">
+      <span class="floor-tile">
         <span class="button" :data-floor="floors - floor + 1" @click="callHandler(floors - floor + 1)">
           <p>{{ floors - floor + 1 }}</p>
         </span>
@@ -43,55 +43,35 @@
 
     .floor {
       padding: $gutter;
-      border-bottom: 1px solid rgb(224, 220, 220);
+      border-bottom: 1px solid $light;
 
-      .p {
-        display: flex;
-        flex-direction: row;
-        gap: 0.5rem;
-        align-items: center;
-        position: fixed;
-        left: 15px;
-        font-size: $font-large;
+      .floor-tile {
+        @extend .p-fixed;
+        left: $gutter * 2;
         z-index: 5;
+        font-size: $gutter * 3;
 
         .button {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: rgb(224, 220, 220);
-          border-radius: 50vw;
-          width: 36px;
-          height: 36px;
-          aspect-ratio: 1 / 1;
-          box-shadow: 0 0 10px rgba(27, 27, 27, 0.7);
-          cursor: pointer;
-          transition: all 0.2s;
+          @extend .flex, .center-full, .rounded-full, .pointer;
+          height: $gutter * 4;
+          width: $gutter * 4;
+          background-color: $light;
+          box-shadow: $outter-sm;
+          transition: $all-quick;
 
           &:active {
             transform: scale(0.9);
           }
 
           &[waiting='true'] {
-            background-color: rgb(144, 238, 144);
-            box-shadow: 0 0 10px rgb(36, 217, 36);
+            background-color: $active;
+            box-shadow: $outter-sm-green;
           }
 
           p {
             pointer-events: none;
           }
         }
-      }
-
-      button {
-        position: relative;
-        top: 50px;
-      }
-
-      svg {
-        // position: absolute;
-        // top: 0;
-        // left: 0;
       }
     }
   }

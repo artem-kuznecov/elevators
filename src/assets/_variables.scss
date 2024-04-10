@@ -1,5 +1,18 @@
-$timing: 1s;
-
 $gutter: 8px;
 
-$font-large: 24px;
+$light: rgb(224, 220, 220);
+$grey: #d9d9d9;
+$gradient: linear-gradient(190.32deg, #9F40CC 5.37%, #F6C444 97.53%);
+$active: rgb(144, 238, 144);
+$inactive: rgb(152, 148, 148);
+
+$outter-sm-light: 0 0 10px rgba(0, 0, 0, 0.4);
+$outter-sm-green: 0 0 10px rgb(36, 217, 36);
+$outter-sm: 0 0 10px rgba(0, 0, 0, 0.7);
+$inner-sm: inset 0 0 10px black;
+$inner-md: inset 0 0 25px black;
+$inner-lg: inset 0 10px 100px black;
+
+$all-long: all 1s linear;
+$all-quick: all 0.2s linear;
+

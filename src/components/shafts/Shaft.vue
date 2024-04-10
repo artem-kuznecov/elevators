@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script setup lang='ts'>
   import { computed } from 'vue'
   import { storeToRefs } from 'pinia'
 
@@ -39,50 +39,34 @@
   </span>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   .shaft {
-    position: absolute;
-    background-color: #d9d9d9;
-    box-shadow: inset 0px 0 10px black;
+    @extend .p-absolute;
     height: 100%;
     width: 10rem;
+    background-color: $grey;
+    box-shadow: $inner-sm;
 
     .cabin {
-      position: relative;
+      @extend .p-relative, .flex, .center-x;
       top: 0;
-      display: flex;
-      justify-content: center;
-      background-color: #d3d3d3;
-      box-shadow: inset 0 0 25px black;
-      padding-top: 8px;
-
-      transition: top 1s linear;
+      padding-top: $gutter;
+      background-color: $light;
+      box-shadow: $inner-md;
+      transition: $all-long;
 
       .table {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 24px;
+        @extend .flex, .center-full;
+        height: $gutter * 3;
         width: 50%;
-        border-radius: 4px;
-        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: $gutter / 2;
+        background-color: $light;
+        box-shadow: $outter-sm-light;
       }
 
       &[cooldown='true'] {
         animation: pulsing 1s infinite;
       }
-    }
-  }
-
-  @keyframes pulsing {
-    0% {
-      box-shadow: inset 0 0 25px black;
-    }
-    50% {
-      box-shadow: inset 0 10px 100px black;
-    }
-    100% {
-      box-shadow: inset 0 0 25px black;
     }
   }
 </style>

@@ -1,0 +1,50 @@
+.p {
+  &-relative {
+    position: relative;
+  }
+  &-absolute {
+    position: absolute;
+  }
+  &-fixed {
+    position: fixed;
+  }
+}
+
+.flex {
+  display: flex;
+}
+
+.center {
+  &-y {
+    align-items: center;
+  }
+  &-x {
+    justify-content: center;
+  }
+  &-full {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.rounded {
+  &-full {
+    border-radius: 100vw;;
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+@keyframes pulsing {
+  0% {
+    box-shadow: $inner-md;
+  }
+  50% {
+    box-shadow: $inner-lg;
+  }
+  100% {
+    box-shadow: $inner-md;
+  }
+}

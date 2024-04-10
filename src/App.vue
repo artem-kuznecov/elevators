@@ -27,40 +27,39 @@
 
 <style lang="scss">
   .buttons-block {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    display: flex;
+    @extend .p-absolute, .flex;
+    top: $gutter;
+    right: $gutter;
     flex-direction: row;
-    gap: 12px;
+    gap: $gutter * 2;
     z-index: 5;
 
     button {
-      background: linear-gradient(190.32deg, #9F40CC 5.37%, #F6C444 97.53%);
+      @extend .pointer;
+      background: $gradient;
       outline: none;
       border: none;
-      padding: 8px;
-      border-radius: 4px;
-      box-shadow: 0 0 10px rgba(27, 27, 27, 0.7);
-      cursor: pointer;
-      transition: all 0.2s;
+      padding: $gutter;
+      border-radius: $gutter / 2;
+      box-shadow: $outter-sm-light;
+      transition: $all-quick;
 
       &:active {
         transform: scale(0.9);
       }
 
       &:hover {
-        box-shadow: 0 0 12px rgba(27, 27, 27, 1);
+        box-shadow: $outter-sm;
       }
 
       &:disabled {
-        background: grey;
+        background: $inactive;
         pointer-events: none;
       }
 
       p {
         color: #fff;
-        font-size: 16px;
+        font-size: $gutter * 2;
         user-select: none;
       }
     }
