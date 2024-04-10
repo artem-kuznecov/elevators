@@ -12,6 +12,12 @@ type TCall = {
   targetFloor: number
 }
 
+// * получение и определение изначальных значений
+const FLOORS_LIMIT: number = Number(import.meta.env.SETTINGS_FLOORS_LIMIT)
+const SHAFTS_LIMIT: number = Number(import.meta.env.SETTINGS_SHAFTS_LIMIT)
+const DEFAULT_FLOORS: number = Number(import.meta.env.SETTINGS_FLOORS) > FLOORS_LIMIT ? FLOORS_LIMIT : Number(import.meta.env.SETTINGS_FLOORS)
+const DEFAULT_SHAFTS: number = Number(import.meta.env.SETTINGS_SHAFTS) > SHAFTS_LIMIT ? SHAFTS_LIMIT : Number(import.meta.env.SETTINGS_SHAFTS)
+
 export const settingsStore = defineStore('settings', () => {
   // * очередь вызовов
   const queue = ref<TCall[]>([])
@@ -23,31 +29,23 @@ export const settingsStore = defineStore('settings', () => {
   const processingCabins = ref(0)
 
   // * количество этажей
-  const floors = ref(5)
+  const floors = ref(DEFAULT_FLOORS)
 
   watch(queue, () => {if (processingCabins.value < shafts.value.length) processQueue(); console.log('changed')}, { deep: true })
 
   // * количество шахт лифта
-  const shafts = ref([
-    {
-      id: 1,
-      currentFloor: 1,
-      busy: false,
-      cooldown: false
-    }
-    // {
-    //   id: 2,
-    //   currentFloor: 4,
-    //   busy: false,
-    //   cooldown: false
-    // }
-    // {
-    //   id: 3,
-    //   currentFloor: 3,
-    //   busy: false,
-    //   cooldown: false
-    // }
-  ])
+  const initialShafts = []
+  for (let i = 0; i < DEFAULT_SHAFTS; i++) {
+    initialShafts.push(
+      {
+        id: i + 1,
+        currentFloor: 1,
+        busy: false,
+        cooldown: false
+      }
+    )
+  }
+  const shafts = ref(initialShafts)
 
   /*
     * функции увеличения и уменьшения количества этажей
