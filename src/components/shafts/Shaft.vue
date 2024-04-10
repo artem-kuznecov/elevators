@@ -5,8 +5,7 @@
   import { settingsStore } from '@/stores/settings'
 
   const props = defineProps({
-    currentFloor: Number,
-    dataOrder: Number
+    shaft: Object
   })
 
   const settings = settingsStore()
@@ -16,18 +15,27 @@
     const height = Number(100 / floors.value) / 100 * window.innerHeight
     return { height }
   })
+
+  const tableSign = computed(() => {
+    if (props.shaft?.isMovingUp === null) return
+    return props.shaft?.isMovingUp ? 'UP': 'DOWN'
+  })
 </script>
 
 <template>
   <span class="shaft">
     <div
       class="cabin"
-      :data-order="dataOrder"
+      :data-order="shaft?.id"
       :style="{
         'height': cabinSizing.height + 'px',
-        'top': (floors - Number(props.currentFloor)) * cabinSizing.height + 'px'
+        'top': (floors - Number(props.shaft?.currentFloor)) * cabinSizing.height + 'px'
       }"
-    ></div>
+    >
+      <span class="table">
+        <p>{{ shaft?.interimFloor }} {{ tableSign }}</p>
+      </span>
+    </div>
   </span>
 </template>
 
@@ -42,10 +50,23 @@
     .cabin {
       position: relative;
       top: 0;
+      display: flex;
+      justify-content: center;
       background-color: #d3d3d3;
       box-shadow: inset 0 0 25px black;
+      padding-top: 8px;
 
       transition: top 1s linear;
+
+      .table {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+        width: 50%;
+        border-radius: 4px;
+        background-color: rgba(255, 255, 255, 0.7);
+      }
 
       &[cooldown='true'] {
         animation: pulsing 1s infinite;

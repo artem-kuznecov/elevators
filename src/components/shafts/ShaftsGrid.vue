@@ -15,8 +15,7 @@
       v-for="shaft in shafts"
       v-bind:key="shaft.id + '_shaft'"
       :style="{'left': 3 + (shaft.id - 1) * (6 + 8)  + 'rem'}"
-      :currentFloor="shaft.currentFloor"
-      :dataOrder="shaft.id"
+      :shaft="shaft"
     />
   </div>
 </template>

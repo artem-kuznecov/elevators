@@ -6,7 +6,9 @@ interface IShaft {
   id: number,
   currentFloor: number,
   busy: boolean,
-  cooldown: boolean
+  cooldown: boolean,
+  isMovingUp: boolean | null ,
+  interimFloor: number
 }
 
 type TCall = {
@@ -33,14 +35,16 @@ export const settingsStore = defineStore('settings', () => {
   const floors = ref(DEFAULT_FLOORS)
 
   // * количество шахт лифта
-  const initialShafts = []
+  const initialShafts: IShaft[] = []
   for (let i = 0; i < DEFAULT_SHAFTS; i++) {
     initialShafts.push(
       {
         id: i + 1,
         currentFloor: 1,
         busy: false,
-        cooldown: false
+        cooldown: false,
+        isMovingUp: null,
+        interimFloor: 1
       }
     )
   }
@@ -86,7 +90,9 @@ export const settingsStore = defineStore('settings', () => {
       id: newID,
       currentFloor: 1,
       busy: false,
-      cooldown: false
+      cooldown: false,
+      isMovingUp: null,
+      interimFloor: 1
     })
   }
 
@@ -154,12 +160,23 @@ export const settingsStore = defineStore('settings', () => {
     const selectedCabin = shafts.value.indexOf(selectedCabinElement)
 
     shafts.value[selectedCabin].busy = true
+    if (shafts.value[selectedCabin].currentFloor < targetFloor) shafts.value[selectedCabin].isMovingUp = true
+    else shafts.value[selectedCabin].isMovingUp = false
 
     // * добавление анимации нужной продолжительности
     // FIXME
     const cabinElement = document.querySelector(`.cabin[data-order="${shafts.value[selectedCabin].id}"]`) as HTMLElement
     cabinElement.style.transitionDuration = Math.abs(shafts.value[selectedCabin].currentFloor - targetFloor) + 's'
     // FIXME
+
+    const inter = setInterval(() => {
+      if (shafts.value[selectedCabin].isMovingUp === true) shafts.value[selectedCabin].interimFloor++
+      else shafts.value[selectedCabin].interimFloor--
+      if (shafts.value[selectedCabin].interimFloor === targetFloor) {
+        clearInterval(inter)
+        shafts.value[selectedCabin].isMovingUp = null
+      }
+    }, 1000)
 
     finishProcess(selectedCabin, cabinElement, targetFloor)
 
