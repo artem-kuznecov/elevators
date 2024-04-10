@@ -18,9 +18,9 @@
   <ShaftsGrid />
 
   <span class="buttons-block">
-    <button data-var="floors" :disabled="floors > FLOORS_LIMIT" @click="addFloors()"><p>Добавить этаж</p></button>
+    <button data-var="floors" :disabled="floors > FLOORS_LIMIT - 1" @click="addFloors()"><p>Добавить этаж</p></button>
     <button data-var="floors" :disabled="floors < 3" @click="reduceFloors()"><p>Убрать этаж</p></button>
-    <button data-var="shafts" :disabled="shafts.length > SHAFTS_LIMIT" @click="addShafts()"><p>Добавить шахту</p></button>
+    <button data-var="shafts" :disabled="shafts.length > SHAFTS_LIMIT - 1" @click="addShafts()"><p>Добавить шахту</p></button>
     <button data-var="shafts" :disabled="shafts.length < 2" @click="reduceShafts()"><p>Убрать шахту</p></button>
   </span>
 </template>
