@@ -34,19 +34,34 @@
 <style scoped>
   .shaft {
     position: absolute;
-    background-color: lightgreen;
+    background-color: #d9d9d9;
+    box-shadow: inset 0px 0 10px black;
     height: 100%;
     width: 10rem;
 
     .cabin {
       position: relative;
       top: 0;
-      background-color: red;
+      background-color: #d3d3d3;
+      box-shadow: inset 0 0 25px black;
+
       transition: top 1s linear;
 
       &[cooldown='true'] {
-        background-color: grey;
+        animation: pulsing 1s infinite;
       }
+    }
+  }
+
+  @keyframes pulsing {
+    0% {
+      box-shadow: inset 0 0 25px black;
+    }
+    50% {
+      box-shadow: inset 0 10px 100px black;
+    }
+    100% {
+      box-shadow: inset 0 0 25px black;
     }
   }
 </style>

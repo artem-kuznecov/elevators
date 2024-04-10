@@ -16,7 +16,6 @@
   })
 
   const callHandler = (targetFloor: number) => {
-    document.querySelector(`[data-floor="${targetFloor}"]`)?.setAttribute('waiting', 'true')
     appendCall(targetFloor)
   }
 </script>
@@ -44,7 +43,7 @@
 
     .floor {
       padding: $gutter;
-      border-bottom: 1px solid black;
+      border-bottom: 1px solid rgb(224, 220, 220);
 
       .p {
         display: flex;
@@ -52,6 +51,7 @@
         gap: 0.5rem;
         align-items: center;
         position: fixed;
+        left: 15px;
         font-size: $font-large;
         z-index: 5;
 
@@ -59,7 +59,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: #D9D9D9;
+          background-color: rgb(224, 220, 220);
           border-radius: 50vw;
           width: 36px;
           height: 36px;
@@ -74,6 +74,7 @@
 
           &[waiting='true'] {
             background-color: rgb(144, 238, 144);
+            box-shadow: 0 0 10px rgb(36, 217, 36);
           }
 
           p {
