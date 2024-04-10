@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
+// * типы данных
 interface IShaft {
   id: number,
   currentFloor: number,
@@ -31,8 +32,6 @@ export const settingsStore = defineStore('settings', () => {
   // * количество этажей
   const floors = ref(DEFAULT_FLOORS)
 
-  watch(queue, () => {if (processingCabins.value < shafts.value.length) processQueue(); console.log('changed')}, { deep: true })
-
   // * количество шахт лифта
   const initialShafts = []
   for (let i = 0; i < DEFAULT_SHAFTS; i++) {
@@ -47,28 +46,37 @@ export const settingsStore = defineStore('settings', () => {
   }
   const shafts = ref(initialShafts)
 
+  // * установка наблюдателя: если лифтов в движении меньше, чем всего лифтов - выполняется обработка очереди вызовов
+  watch(queue, () => {
+    if (processingCabins.value < shafts.value.length) processQueue()
+    },
+    { deep: true }
+  )
+
   /*
     * функции увеличения и уменьшения количества этажей
-    * ПРИМЕЧАНИЕ: по умолчанию задано ограничение в 8 этажей
   */
 
   function addFloors (): void {
-    if (floors.value > 7) return
+    if (floors.value > FLOORS_LIMIT - 1) return
+    const cabinElement: HTMLElement[] = [...document.querySelectorAll('.cabin')] as HTMLElement[]
+    cabinElement.forEach((cabin: HTMLSpanElement) => cabin.style.transitionDuration = '0s')
     floors.value++
   }
 
   function reduceFloors (): void {
     if (floors.value < 3) return
+    const cabinElement: HTMLElement[] = [...document.querySelectorAll('.cabin')] as HTMLElement[]
+    cabinElement.forEach((cabin: HTMLSpanElement) => cabin.style.transitionDuration = '0s')
     floors.value--
   }
 
   /*
     * функции увеличения и уменьшения количества шахт лифта
-    * ПРИМЕЧАНИЕ: по умолчанию задано ограничение в 6 шахт
   */
 
   function addShafts (): void {
-    if (shafts.value.length > 5) return
+    if (shafts.value.length > SHAFTS_LIMIT - 1) return
     const newID = shafts.value[shafts.value.length - 1].id + 1
     shafts.value.push({
       id: newID,
@@ -84,20 +92,45 @@ export const settingsStore = defineStore('settings', () => {
   }
 
   /*
+    * утилитарная функция "завершения" поездки лифта и его "простоя"
+  */
+
+  function finishProcess (prevSelected: number, cabinElement: HTMLElement, targetFloor: number) {
+    setTimeout(() => {
+      // * установка статуса "простоя" лифту
+      shafts.value[prevSelected].cooldown = true
+      cabinElement.setAttribute('cooldown', 'true')
+      shafts.value[prevSelected].busy = false
+      queue.value.shift()
+
+      // * проверка, есть ли еще вызовы
+      processingCabins.value--
+      document.querySelector(`span.button[data-floor="${targetFloor}"]`)?.setAttribute('waiting', 'false')
+
+      setTimeout(() => {
+        shafts.value[prevSelected].cooldown = false
+        cabinElement.setAttribute('cooldown', 'false')
+        if (queue.value.length) return processQueue()
+      }, 3000)
+
+      if (queue.value.length) processQueue()
+    }, Math.abs(shafts.value[prevSelected].currentFloor - targetFloor) * 1000)
+  }
+
+  /*
     * функции обработки очереди вызовов
   */
 
   function processQueue (): void {
     // * если нет активных вызовов
-    if (!queue.value.length) return
+    if (!queue.value.length) return console.log('RETURN OUT')
 
     // * подсчет количества лифтов в работе - по сути, это количество выполняемых заказов
     const workingShafts = shafts.value.filter(shaft => shaft.busy)
 
-    const targetFloor = queue.value[workingShafts.length].targetFloor
+    if (!queue.value[workingShafts.length]) return
 
-    // * если на целевом этаже уже есть лифт - выход из функции
-    if (shafts.value.some(shaft => shaft.currentFloor === targetFloor)) return
+    const targetFloor = queue.value[workingShafts.length].targetFloor
 
     // * нахождение ближайшего к целевому этажу лифта и перевод его в статус "занят"
     // * фильтрация только незанятых и простаивающих лифтов
@@ -122,25 +155,7 @@ export const settingsStore = defineStore('settings', () => {
     const cabinElement = document.querySelector(`.cabin[data-order="${shafts.value[selectedCabin].id}"]`) as HTMLElement
     cabinElement.style.transitionDuration = Math.abs(shafts.value[selectedCabin].currentFloor - targetFloor) + 's'
 
-    setTimeout(() => {
-      // * установка статуса "простоя" лифту
-      shafts.value[selectedCabin].cooldown = true
-      cabinElement.setAttribute('cooldown', 'true')
-      shafts.value[selectedCabin].busy = false
-      queue.value.shift()
-
-      // * проверка, есть ли еще вызовы
-      processingCabins.value--
-      document.querySelector(`[data-floor="${targetFloor}"]`)?.setAttribute('waiting', 'false')
-      if (queue.value.length) processQueue()
-
-      setTimeout(() => {
-        shafts.value[selectedCabin].cooldown = false
-        cabinElement.setAttribute('cooldown', 'false')
-        if (queue.value.length) return processQueue()
-      }, 3000)
-
-    }, Math.abs(shafts.value[selectedCabin].currentFloor - targetFloor) * 1000)
+    finishProcess(selectedCabin, cabinElement, targetFloor)
 
     shafts.value[selectedCabin].currentFloor = targetFloor
   }
@@ -148,8 +163,12 @@ export const settingsStore = defineStore('settings', () => {
   function appendCall (targetFloor: number): void {
     // * проверка на наличие такого вызова в очереди
     const isInQueue = queue.value.some(call => call.targetFloor === targetFloor)
+    // * проверка на наличие лифта на целевом этаже
+    // const isOnTargetFloor = shafts.value.some(shaft => shaft.currentFloor === targetFloor)
+
     if (isInQueue) return
 
+    document.querySelector(`span.button[data-floor="${targetFloor}"]`)?.setAttribute('waiting', 'true')
     queue.value.push({ targetFloor })
   }
 
